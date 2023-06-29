@@ -88,10 +88,7 @@ where
             .unwrap_or_else(|err| match err {});
 
         let mut service = make_service
-            .call(IncomingStream {
-                tcp_stream: &tcp_stream,
-                remote_addr,
-            })
+            .call(IncomingStream::new(&tcp_stream, remote_addr))
             .await
             .unwrap_or_else(|err| match err {});
 
@@ -160,6 +157,16 @@ where
 pub struct IncomingStream<'a> {
     tcp_stream: &'a TcpStream,
     remote_addr: SocketAddr,
+}
+
+impl<'a> IncomingStream<'a> {
+    /// create IncomingStream<'a>
+    pub fn new(tcp_stream: &'a TcpStream, remote_addr: SocketAddr) -> Self {
+        Self {
+            tcp_stream,
+            remote_addr,
+        }
+    }
 }
 
 impl IncomingStream<'_> {
